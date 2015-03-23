@@ -13,6 +13,11 @@ app.use(require('body-parser').json())
 var jwt_secret = require('./config/jwt')
 
 /**
+ * CORS middleware
+ */
+app.use(require('./routes/cors'));
+
+/**
  * JWT token middleware
  */
 app.use(
