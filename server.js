@@ -4,13 +4,19 @@ var express  = require('express')
 var app      = express()
 
 var ApiError = require('./lib/error');
+var log      = require('./lib/logger');
 
-var ejwt      = require('express-jwt');
+var ejwt     = require('express-jwt');
 
 app.use(require('morgan')('dev'));
 app.use(require('body-parser').json())
 
 var jwt_secret = require('./config/jwt')
+
+if (!jwt_secret) {
+  log.error('Refusing to start server without JWT_SECRET');
+  process.exit(1);
+}
 
 /**
  * CORS middleware
