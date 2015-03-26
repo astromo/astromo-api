@@ -25,17 +25,38 @@ router.use('/', function(req, res, next) {
       status  : 400
     }))
 
-  if (!users.isValidUser(username, password))
-    return res.status(401).json(new ApiError({
-      message : 'username / password combination invalid',
-      code    : 'invalid_login',
-      status  : 401
-    }))
+  users.isValidLogin(username, password)
+    .spread(function(valid, id) {
 
-  req.user = users.getUserByCredentials(username, password);
+      if (!valid)
+        return res.status(401).json(new ApiError({
+          message : 'username / password combination invalid',
+          code    : 'invalid_login',
+          status  : 401
+        }))
 
-  next()
+      users.getUserById(id)
+        .then(function(user) {
+          req.user = user
+          next()
+        })
+    })
+    .catch(function(err) {
+      return exports.unspecifiedError(res, err);
+    });
+
+
+
 })
+
+exports.unspecifiedError = function(res, err) {
+  console.log(err);
+  return res.status(500).json(new ApiError({
+    message : 'something went wrong',
+    code    : 'undefined_error',
+    status  : 500
+  }))
+};
 
 /**
  * Return JWT signed token
