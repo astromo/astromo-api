@@ -10,6 +10,7 @@ var ejwt     = require('express-jwt');
 
 app.use(require('morgan')('dev'));
 app.use(require('body-parser').json())
+app.use(require('./routes/cors')); // CORS
 
 var jwt_secret = require('./config/jwt')
 
@@ -17,11 +18,6 @@ if (!jwt_secret) {
   log.error('Refusing to start server without JWT_SECRET');
   process.exit(1);
 }
-
-/**
- * CORS middleware
- */
-app.use(require('./routes/cors'));
 
 /**
  * JWT token middleware
