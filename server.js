@@ -8,9 +8,11 @@ var log      = require('./lib/logger');
 
 var ejwt     = require('express-jwt');
 
+var port     = process.env.PORT || 3000;
+
 app.use(require('morgan')('dev'));
 app.use(require('body-parser').json())
-app.use(require('./routes/cors')); // CORS
+app.use(require('./routes/cors')); // CORS middleware
 
 var jwt_secret = require('./config/jwt')
 
@@ -23,9 +25,7 @@ if (!jwt_secret) {
  * JWT token middleware
  */
 app.use(
-  ejwt({
-    secret: jwt_secret
-  })
+  ejwt({ secret: jwt_secret })
   .unless({
     path: ['/', '/login']
   })
@@ -40,13 +40,17 @@ app.use(function (err, req, res, next) {
   }
 });
 
-app.post('/login', require('./routes/login'))
+// Login routes
+app.post('/login', require('./routes/login'));
+
+// User routes
+app.use('/users', require('./routes/users'));
 
 app.get('/', function (req, res) {
   res.send('Astromo API')
 })
 
-var server = app.listen(3000, function () {
+var server = app.listen(port, function () {
 
   var host = server.address().address
   var port = server.address().port

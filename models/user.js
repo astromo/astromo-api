@@ -14,8 +14,12 @@ module.exports = sequelize.define('user', {
     }
   },
   password   : Sequelize.STRING,
+
   first_name : Sequelize.STRING,
   last_name  : Sequelize.STRING,
+
+  title      : Sequelize.STRING,
+  avatar     : Sequelize.STRING,
 
 }, {
 

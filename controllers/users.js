@@ -1,7 +1,10 @@
 'use strict';
 
-var sequelize = require('../lib/db');
-var User      = require('../models/user');
+var sequelize    = require('../lib/db');
+var User         = require('../models/user');
+var Organisation = require('../models/organisation');
+
+User.belongsTo(Organisation);
 
 /**
  * Single query to determine wether a username and password combination are
@@ -29,5 +32,8 @@ exports.isValidLogin = function(email, password) {
 };
 
 exports.getUserById = function(id) {
-  return User.find(id);
+  return User.find({
+    where      : { id: id },
+    include    : { model: Organisation }
+  });
 }
