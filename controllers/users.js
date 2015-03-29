@@ -3,8 +3,10 @@
 var sequelize    = require('../lib/db');
 var User         = require('../models/user');
 var Organisation = require('../models/organisation');
+var Invoice      = require('../models/invoice');
 
 User.belongsTo(Organisation);
+User.hasMany(Invoice);
 
 /**
  * Single query to determine wether a username and password combination are
@@ -31,9 +33,22 @@ exports.isValidLogin = function(email, password) {
     });
 };
 
+exports.getJWTSecret = function(id) {
+  return User.find({ where: { id: id }, attributes: ['jwt_secret'] })
+    .then(function(user) {
+      return user.jwt_secret;
+    });
+};
+
 exports.getUserById = function(id) {
   return User.find({
     where      : { id: id },
     include    : { model: Organisation }
   });
 }
+
+exports.getInvoices = function(id) {
+  return User.find(id).then(function(user) {
+    return user.getInvoices();
+  });
+};

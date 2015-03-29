@@ -14,18 +14,19 @@ app.use(require('morgan')('dev'));
 app.use(require('body-parser').json())
 app.use(require('./routes/cors')); // CORS middleware
 
-var jwt_secret = require('./config/jwt')
+function getUserSecret(req, payload, done) {
 
-if (!jwt_secret) {
-  log.error('Refusing to start server without JWT_SECRET');
-  process.exit(1);
-}
+  var secret = require('./controllers/users').getJWTSecret(payload.sub)
+    .then(function(secret) {
+      done(null, secret);
+    });
+};
 
 /**
  * JWT token middleware
  */
 app.use(
-  ejwt({ secret: jwt_secret })
+  ejwt({ secret: getUserSecret })
   .unless({
     path: ['/', '/login']
   })

@@ -14,18 +14,17 @@ router.get('/me', function(req, res) {
 
 });
 
-router.get('/:userid', function(req, res) {
-  var userid = req.params.userid;
-
-  users.getUserById(userid).then(function(user) {
-    res.json(user);
-  })
-  .catch(console.error)
-
+router.put('/me', function(req, res) {
+  res.send('not yet implemented');
 });
 
-router.put('/:userid', function(req, res) {
+router.get('/me/invoices', function(req, res) {
+  var userid = req.user.sub;
 
+  users.getInvoices(userid).then(function(invoices) {
+    res.json(invoices);
+  })
+  .catch(console.error)
 });
 
 module.exports = router;

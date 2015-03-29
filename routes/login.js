@@ -8,7 +8,6 @@ var ApiError   = require('../lib/error')
 var users      = require('../controllers/users')
 
 var jwt        = require('jsonwebtoken')
-var jwt_secret = require('../config/jwt')
 
 /**
  * Authentication check
@@ -69,8 +68,10 @@ router.use('/', function(req, res) {
     scopes    : req.user.scopes
   };
 
-  var token = jwt.sign(payload, jwt_secret)
-  res.json({ token: token })
+  users.getJWTSecret(req.user.id).then(function(secret) {
+    var token = jwt.sign(payload, secret);
+    res.json({ token: token });
+  });
 
 })
 

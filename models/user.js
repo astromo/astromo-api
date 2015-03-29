@@ -14,6 +14,11 @@ module.exports = sequelize.define('user', {
     }
   },
   password   : Sequelize.STRING,
+  jwt_secret : {
+    type         : Sequelize.UUID,
+    defaultValue : Sequelize.UUIDV4,
+    allowNull    : false
+  },
 
   first_name : Sequelize.STRING,
   last_name  : Sequelize.STRING,
