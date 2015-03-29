@@ -14,13 +14,15 @@ app.use(require('morgan')('dev'));
 app.use(require('body-parser').json())
 app.use(require('./routes/cors')); // CORS middleware
 
+// TODO: handle failure
 function getUserSecret(req, payload, done) {
 
-  var secret = require('./controllers/users').getJWTSecret(payload.sub)
+  require('./controllers/users').getJWTSecret(payload.sub)
     .then(function(secret) {
       done(null, secret);
-    });
-};
+    })
+    .catch(log.error);
+}
 
 /**
  * JWT token middleware
@@ -41,12 +43,16 @@ app.use(function (err, req, res, next) {
   }
 });
 
-// Login routes
+// Login route
 app.post('/login', require('./routes/login'));
 
-// User routes
+// User router
 app.use('/users', require('./routes/users'));
 
+// Metrics router
+app.use('/metrics', require('./routes/metrics'));
+
+// Health check endpoint
 app.get('/', function (req, res) {
   res.send('Astromo API')
 })
