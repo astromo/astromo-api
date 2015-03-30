@@ -1,13 +1,14 @@
 'use strict';
 
-var express    = require('express')
-var router     = express.Router()
+var express    = require('express');
+var router     = express.Router();
 
-var ApiError   = require('../lib/error')
+var ApiError   = require('../lib/error');
 
-var users      = require('../controllers/users')
+var users      = require('../controllers/users');
 
-var jwt        = require('jsonwebtoken')
+var jwt        = require('jsonwebtoken');
+var jwt_secret = require('../config/jwt');
 
 /**
  * Authentication check
@@ -68,10 +69,8 @@ router.use('/', function(req, res) {
     scopes    : req.user.scopes
   };
 
-  users.getJWTSecret(req.user.id).then(function(secret) {
-    var token = jwt.sign(payload, secret);
-    res.json({ token: token });
-  });
+  var token = jwt.sign(payload, jwt_secret);
+  res.json({ token: token });
 
 })
 

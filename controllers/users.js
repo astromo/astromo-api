@@ -33,13 +33,6 @@ exports.isValidLogin = function(email, password) {
     });
 };
 
-exports.getJWTSecret = function(id) {
-  return User.find({ where: { id: id }, attributes: ['jwt_secret'] })
-    .then(function(user) {
-      return user.jwt_secret;
-    });
-};
-
 exports.getUserById = function(id) {
   return User.find({
     where      : { id: id },

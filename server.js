@@ -4,31 +4,26 @@ var express  = require('express')
 var app      = express()
 
 var ApiError = require('./lib/error');
-var log      = require('./lib/logger');
 
 var ejwt     = require('express-jwt');
+var jwt_secret = require('./config/jwt');
 
 var port     = process.env.PORT || 3000;
 
 app.use(require('morgan')('dev'));
-app.use(require('body-parser').json())
+app.use(require('body-parser').json());
 app.use(require('./routes/cors')); // CORS middleware
 
-// TODO: handle failure
-function getUserSecret(req, payload, done) {
-
-  require('./controllers/users').getJWTSecret(payload.sub)
-    .then(function(secret) {
-      done(null, secret);
-    })
-    .catch(log.error);
+if (typeof jwt_secret === 'undefined') {
+  console.error('Refusing to start without JWT_SECRET');
+  process.exit(1);
 }
 
 /**
  * JWT token middleware
  */
 app.use(
-  ejwt({ secret: getUserSecret })
+  ejwt({ secret: jwt_secret })
   .unless({
     path: ['/', '/login']
   })
