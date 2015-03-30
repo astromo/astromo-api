@@ -1,13 +1,13 @@
 'use strict';
 
-var request     = require('request');
-
-var router = require('express').Router();
+var request = require('request');
+var log     = require('../lib/logger');
+var router  = require('express').Router();
 
 router.get('/latency', function(req, res) {
 
   // TODO: figure out database name from userid (through organisation)
-  var db     = 'localhost';
+  var db     = 'test';
   var target = 'google.be';
 
   var query  = 'SELECT mean(ms) FROM latency WHERE time > now() - 2h AND host=\'' + target + '\' GROUP BY time(1s)';
@@ -22,10 +22,20 @@ router.get('/latency', function(req, res) {
     json : true,
     qs   : qs
   }, function(err, resp, body) {
-    if (err)
-      throw err;
+    var values = [];
 
-    res.json(body.results[0].series[0].values);
+    if (err) {
+      log.error('Could not connect to the Metrics Database');
+      res.json(values);
+    }
+
+    try {
+      values = body.results[0].series[0].values;
+    } catch(e) {
+      // shhh
+    }
+
+    res.json(values);
   })
 
 });
