@@ -10,7 +10,7 @@ router.get('/latency', function(req, res) {
   var db     = 'localhost';
   var target = 'google.be';
 
-  var query  = 'SELECT mean(ms) FROM latency WHERE time > now() - 15m AND host=\'' + target + '\' GROUP BY time(1s)';
+  var query  = 'SELECT mean(ms) FROM latency WHERE time > now() - 2h AND host=\'' + target + '\' GROUP BY time(1s)';
 
   var qs = {
     db : db,
