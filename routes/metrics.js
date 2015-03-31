@@ -8,9 +8,8 @@ router.get('/latency', function(req, res) {
 
   // TODO: figure out database name from userid (through organisation)
   var db     = 'test';
-  var target = 'google.be';
 
-  var query  = 'SELECT mean(ms) FROM latency WHERE time > now() - 2h AND host=\'' + target + '\' GROUP BY time(1s)';
+  var query  = 'SELECT mean(ms) FROM latency WHERE time > now() - 2h GROUP BY time(1s) fill(0)';
 
   var qs = {
     db : db,
