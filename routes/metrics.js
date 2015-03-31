@@ -1,41 +1,43 @@
 'use strict';
 
-var request = require('request');
+var Influx  = require('node-influx');
 var log     = require('../lib/logger');
 var router  = require('express').Router();
 
 router.get('/latency', function(req, res) {
 
   // TODO: figure out database name from userid (through organisation)
-  var db     = 'test';
+  var client = new Influx({
+    host : 'astromo.dev',
+    db   : 'test',
+  });
 
-  var query  = 'SELECT mean(ms) FROM latency WHERE time > now() - 2h GROUP BY time(1s) fill(0)';
+  // figure out 90th percentile
+  client.query('SELECT percentile(ms, 95) FROM latency').then(function(results) {
 
-  var qs = {
-    db : db,
-    q  : query
-  };
+    var percentile = results[0].series[0].values[0][1];
 
-  request({
-    url  : 'http://localhost:8086/query?' + qs,
-    json : true,
-    qs   : qs
-  }, function(err, resp, body) {
-    var values = [];
+    var query  = 'SELECT mean(ms) FROM latency \
+      WHERE time > now() - 2h \
+      AND ms < ' + percentile + ' \
+      GROUP BY time(1s)';
 
-    if (err) {
-      log.error('Could not connect to the Metrics Database');
-      res.json(values);
-    }
+    return client.query(query).then(function(results) {
+      try {
+        return results[0].series[0].values;
+      } catch(e) {
+        return [];
+      }
+    });
 
-    try {
-      values = body.results[0].series[0].values;
-    } catch(e) {
-      // shhh
-    }
-
+  })
+  .then(function(values) {
     res.json(values);
   })
+  .catch(function(err) {
+    log.error(err);
+    res.json([]);
+  });
 
 });
 

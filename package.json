@@ -20,7 +20,8 @@
     "pg": "^4.3.0",
     "pg-hstore": "^2.3.1",
     "request": "^2.54.0",
-    "sequelize": "^2.0.5"
+    "sequelize": "^2.0.5",
+    "node-influx": "astromo/node-influx"
   },
   "devDependencies": {}
 }
