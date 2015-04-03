@@ -12,6 +12,7 @@ var port     = process.env.PORT || 3000;
 
 app.use(require('morgan')('dev'));
 app.use(require('body-parser').json());
+
 app.use(require('./routes/cors')); // CORS middleware
 
 if (typeof jwt_secret === 'undefined') {
@@ -46,6 +47,12 @@ app.use('/users', require('./routes/users'));
 
 // Metrics router
 app.use('/metrics', require('./routes/metrics'));
+
+// Metrics router
+app.use('/blueprint',
+  require('body-parser').text({ type: ['text/plain', 'text/x-markdown'] }),
+  require('./routes/blueprint')
+);
 
 // Health check endpoint
 app.get('/', function (req, res) {
