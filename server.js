@@ -49,9 +49,9 @@ app.use('/users', require('./routes/users'));
 app.use('/metrics', require('./routes/metrics'));
 
 // Metrics router
-app.use('/blueprint',
+app.use('/blueprints',
   require('body-parser').text({ type: ['text/plain', 'text/x-markdown'] }),
-  require('./routes/blueprint')
+  require('./routes/blueprints')
 );
 
 // Health check endpoint

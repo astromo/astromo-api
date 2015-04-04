@@ -27,4 +27,16 @@ router.get('/me/invoices', function(req, res) {
   .catch(console.error)
 });
 
+router.get('/me/blueprints', function(req, res) {
+  var userid = req.user.sub;
+
+  users.getBlueprints(userid).then(function(blueprints) {
+    res.json(blueprints);
+  })
+  .catch(function(err) {
+    res.status(500).send(err);
+  });
+
+});
+
 module.exports = router;

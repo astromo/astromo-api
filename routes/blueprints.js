@@ -3,7 +3,7 @@
 var router      = require('express').Router();
 var log         = require('../lib/logger');
 
-var protagonist = require('protagonist');
+var blueprints  = require('../controllers/blueprints');
 
 router.put('/compile', function(req, res) {
 
@@ -12,7 +12,8 @@ router.put('/compile', function(req, res) {
 
   var blueprint = req.body;
 
-  protagonist.parse(blueprint, function(err, result) {
+  blueprints.compile(blueprint, function(err, result) {
+
     if (err) {
       log.error(err);
       return res.status(500).send('oops, something went wrong');
@@ -20,6 +21,24 @@ router.put('/compile', function(req, res) {
 
     res.set('Content-Type', 'application/vnd.apiblueprint.ast.raw+json; version=3.0');
     return res.json(result.ast);
+  });
+
+});
+
+router.get('/:id', function(req, res) {
+  var identifier = req.params.id,
+      options    = {};
+
+  if (isFinite(identifier))
+    options.id = identifier;
+  else
+    options.slug = identifier;
+
+  blueprints.get(options).then(function(blueprint) {
+    return res.json(blueprint);
+  })
+  .catch(function(ex) {
+    return res.status(500).send(ex)
   });
 
 });

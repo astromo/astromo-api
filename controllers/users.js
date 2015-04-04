@@ -45,3 +45,15 @@ exports.getInvoices = function(id) {
     return user.getInvoices();
   });
 };
+
+exports.getBlueprints = function(id) {
+  return User.find(id).then(function(user) {
+    return user.getOrganisation()
+      .then(function(organisation) {
+        return organisation.getBlueprints();
+      })
+      .catch(function(err) {
+        return [];
+      });
+  });
+};
