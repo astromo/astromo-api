@@ -46,14 +46,15 @@ exports.getInvoices = function(id) {
   });
 };
 
-exports.getBlueprints = function(id) {
+exports.getBlueprints = function(id, fields) {
+  fields = fields || null;
+
   return User.find(id).then(function(user) {
-    return user.getOrganisation()
-      .then(function(organisation) {
-        return organisation.getBlueprints();
-      })
-      .catch(function(err) {
-        return [];
-      });
+    return user.getOrganisation().then(function(organisation) {
+      return organisation.getBlueprints({ attributes : fields });
+    })
+    .catch(function(err) {
+      return [];
+    });
   });
 };

@@ -28,9 +28,11 @@ router.get('/me/invoices', function(req, res) {
 });
 
 router.get('/me/blueprints', function(req, res) {
-  var userid = req.user.sub;
 
-  users.getBlueprints(userid).then(function(blueprints) {
+  var userid = req.user.sub;
+  var fields = req.query.fields ? req.query.fields.split(',') : null;
+
+  users.getBlueprints(userid, fields).then(function(blueprints) {
     res.json(blueprints);
   })
   .catch(function(err) {
