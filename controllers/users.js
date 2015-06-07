@@ -41,7 +41,7 @@ exports.getUserById = function(id) {
 }
 
 exports.getInvoices = function(id) {
-  return User.find(id).then(function(user) {
+  return User.findById(id).then(function(user) {
     return user.getInvoices();
   });
 };
@@ -49,7 +49,7 @@ exports.getInvoices = function(id) {
 exports.getBlueprints = function(id, fields) {
   fields = fields || null;
 
-  return User.find(id).then(function(user) {
+  return User.findById(id).then(function(user) {
     return user.getOrganisation().then(function(organisation) {
       return organisation.getBlueprints({ attributes : fields });
     })
